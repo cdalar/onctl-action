@@ -5,7 +5,7 @@ github action for onctl preview environments
 ## Usage
 
 ```yaml
-- uses: cdalar/onctl-action@v1.0.0
+- uses: cdalar/onctl-action@v1
   with:
     args: "up"
 
