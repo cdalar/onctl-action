@@ -5,5 +5,34 @@ branding:
 name: 'onctl-action'
 description: 'onctl CLI action'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  # using: 'docker'
+  # image: 'Dockerfile'
+  using: "composite"
+  steps:
+  - uses: actions/checkout@v3
+  - name: Install SSH Key
+    uses: shimataro/ssh-key-action@v2
+    with:
+      key: ${{ secrets.SSH_PRIVATE_KEY }} 
+      known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+  - name: Install onctl
+    shell: bash
+    run: |
+      wget https://www.github.com/cdalar/onctl/releases/latest/download/onctl-linux-amd64.tar.gz
+      tar zxvf onctl-linux-amd64.tar.gz
+      sudo mv onctl /usr/local/bin/
+      onctl version
+      echo ${{ secrets.SSH_PUBLIC_KEY }} > ~/.ssh/id_rsa.pub
+  - name: deploy
+    shell: bash
+    if: github.event.action != 'closed'
+    run: |
+      onctl up
+      ssh-keyscan $(jq -r '.public_ip' onctl-deploy.json) >> ~/.ssh/known_hosts
+      DOCKER_HOST=$(jq -r '.docker_host' onctl-deploy.json) docker compose up -d --build
+      gh pr comment ${{ github.event.pull_request.number }} -b "Deployed to $(jq -r '.public_url' onctl-deploy.json)"
+  - name: destroy
+    shell: bash
+    if: github.event.action == 'closed'
+    run: |
+      onctl destroy self
