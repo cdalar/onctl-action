@@ -4,6 +4,11 @@ branding:
   color: 'orange'
 name: 'onctl-action'
 description: 'onctl CLI action'
+inputs:
+  args:
+    description: 'Arguments to pass to onctl'
+    required: true
+    default: 'up'
 runs:
   # using: 'docker'
   # image: 'Dockerfile'
@@ -27,7 +32,7 @@ runs:
     shell: bash
     if: github.event.action != 'closed'
     run: |
-      onctl up
+      onctl ${{ inputs.args }}
       ssh-keyscan $(jq -r '.public_ip' onctl-deploy.json) >> ~/.ssh/known_hosts
       DOCKER_HOST=$(jq -r '.docker_host' onctl-deploy.json) docker compose up -d --build
       gh pr comment ${{ github.event.pull_request.number }} -b "Deployed to $(jq -r '.public_url' onctl-deploy.json)"
