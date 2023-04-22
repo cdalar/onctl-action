@@ -9,6 +9,12 @@ inputs:
     description: 'Arguments to pass to onctl'
     required: true
     default: 'up'
+  SSH_PRIVATE_KEY:
+    description: 'SSH Private Key'
+    required: true
+  SSH_PUBLIC_KEY:
+    description: 'SSH Public Key'
+    required: true
 runs:
   # using: 'docker'
   # image: 'Dockerfile'
@@ -18,7 +24,7 @@ runs:
   - name: Install SSH Key
     uses: shimataro/ssh-key-action@v2
     with:
-      key: ${{ secrets.SSH_PRIVATE_KEY }} 
+      key: ${{ inputs.SSH_PRIVATE_KEY }} 
       known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
   - name: Install onctl
     shell: bash
@@ -27,7 +33,7 @@ runs:
       tar zxvf onctl-linux-amd64.tar.gz
       sudo mv onctl /usr/local/bin/
       onctl version
-      echo ${{ secrets.SSH_PUBLIC_KEY }} > ~/.ssh/id_rsa.pub
+      echo ${{ inputs.SSH_PUBLIC_KEY }} > ~/.ssh/id_rsa.pub
   - name: deploy
     shell: bash
     if: github.event.action != 'closed'
