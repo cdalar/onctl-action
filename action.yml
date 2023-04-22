@@ -1,0 +1,9 @@
+# action.yml
+branding:
+  icon: 'box'
+  color: 'orange'
+name: 'onctl-action'
+description: 'onctl CLI action'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
