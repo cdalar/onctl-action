@@ -29,7 +29,7 @@ runs:
   - name: Install onctl
     shell: bash
     run: |
-      wget https://www.github.com/cdalar/onctl/releases/latest/download/onctl-linux-amd64.tar.gz
+      wget -q https://www.github.com/cdalar/onctl/releases/latest/download/onctl-linux-amd64.tar.gz
       tar zxvf onctl-linux-amd64.tar.gz
       sudo mv onctl /usr/local/bin/
       onctl version
