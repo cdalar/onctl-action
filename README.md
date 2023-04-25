@@ -13,7 +13,6 @@ on:
       - main
     types: [opened, reopened, synchronize, closed]
 
- 
 env:
   # Cloud Provider aws or hetzner
   CLOUD_PROVIDER: ${{ vars.CLOUD_PROVIDER }}
@@ -46,10 +45,14 @@ jobs:
           args: up
           SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: up
+      - name: down
         if: github.event.action == 'closed'
         uses: cdalar/onctl-action@v2
+        env:
+          ONCTL_LOG: DEBUG
         with:
           args: down self
+          SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
 ```
